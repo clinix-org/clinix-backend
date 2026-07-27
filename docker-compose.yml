@@ -1,0 +1,12 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: clinix-backend:latest
+    container_name: clinix-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.local
+    restart: always

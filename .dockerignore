@@ -1,0 +1,26 @@
+# Pastas de Build e Compilação Local
+target/
+
+# Ambientes e Secrets
+.env
+.env.local
+.env.*.example
+
+# Git e versionamento
+.git/
+.gitignore
+.gitattributes
+
+# Arquivos da IDE e Editores
+.vscode/
+.idea/
+
+# Scripts locais e Documentação
+scripts/
+HELP.md
+LICENSE
+*.md
+
+# Docker e infraestutura
+Dockerfile
+docker-compose.yml
