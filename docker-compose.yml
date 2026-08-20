@@ -1,12 +1,16 @@
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: clinix-backend:latest
-    container_name: clinix-backend
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env.local
+  postgres:
+    image: postgres:18
+    container_name: postgres
     restart: always
+    environment:
+      POSTGRES_DB: "clinix"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:

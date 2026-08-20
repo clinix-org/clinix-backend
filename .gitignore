@@ -19,7 +19,7 @@ release.properties
 # Arquivos com variaveis reais de ambiente (nunca versionar)
 .env
 .env.*
-!.env.*.example
+!.env*.example
 
 # Estes arquivos contem apenas referencias a variaveis, nunca valores secretos.
 !src/main/resources/application.properties
