@@ -1,0 +1,99 @@
+name: 🐛 Bug Report
+description: Relate um problema ou comportamento inesperado no Clinix API.
+title: "[BUG] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por relatar um problema no Clinix API.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Verifiquei que este problema ainda não foi reportado em outra Issue.
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do problema
+      description: Descreva de forma clara e objetiva o problema encontrado.
+      placeholder: Explique o que aconteceu.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      description: Informe os passos necessários para reproduzir o problema.
+      placeholder: |
+        1. Faça login...
+        2. Acesse...
+        3. Execute...
+        4. Observe o erro...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+      description: O que deveria acontecer?
+      placeholder: Descreva o comportamento esperado.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamento atual
+      description: O que está acontecendo atualmente?
+      placeholder: Descreva o comportamento observado.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Em qual ambiente o problema foi identificado?
+      options:
+        - Local
+        - Desenvolvimento
+        - Homologação
+        - Produção
+        - Outro
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Versão / Commit
+      description: Informe a versão, tag ou hash do commit onde o problema ocorre (se souber).
+      placeholder: "Exemplo: v1.4.2 ou commit a1b2c3d"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou mensagens de erro
+      description: Cole aqui os logs ou mensagens de erro relevantes.
+      render: shell
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidências
+      description: Adicione prints, vídeos ou outras evidências que possam ajudar na investigação.
+      placeholder: Arraste os arquivos para esta área.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações adicionais
+      description: Adicione qualquer outra informação relevante.

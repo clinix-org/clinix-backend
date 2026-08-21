@@ -1,0 +1,62 @@
+name: ❓ Question
+description: Tire dúvidas sobre configuração, execução ou utilização do Clinix API.
+title: "[QUESTION] "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de abrir uma nova Issue, consulte o README e verifique se sua dúvida já foi respondida em outra Issue.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Consultei o README e Issues existentes antes de abrir esta dúvida.
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Qual é a sua dúvida?
+      description: Descreva claramente o que você precisa saber.
+      placeholder: Explique sua dúvida.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: Forneça informações que ajudem a entender o cenário.
+      placeholder: |
+        Informe, por exemplo:
+        - O que você estava tentando fazer?
+        - Qual configuração está utilizando?
+        - Qual etapa apresentou dificuldade?
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Informe o ambiente utilizado.
+      placeholder: Exemplo: Fedora 44, Java 17, PostgreSQL 18
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Erro ou mensagem apresentada
+      description: Caso exista algum erro, informe a mensagem apresentada.
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações adicionais
+      description: Adicione qualquer informação que possa ajudar.
