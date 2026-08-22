@@ -117,27 +117,6 @@ DB_PASSWORD=postgres
 DB_DDL_AUTO=update
 ```
 
---- 
-
-```markdown
-> **Nota sobre os comandos Docker**
->
-> Os próximos comandos Docker funcionam normalmente no **PowerShell do Windows**.
->
-> No **Linux**, adicione `sudo` antes dos comandos quando necessário. Por exemplo:
->
-> **Windows (PowerShell):**
->
-> ```bash
-> docker compose up -d
-> ```
->
-> **Linux:**
->
-> ```bash
-> sudo docker compose up -d
-> ```
-
 ---
 
 ### Passo 2 — Subir o container
