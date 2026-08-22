@@ -3,13 +3,9 @@
 API RESTful em **Java 17 + Spring Boot 3** para o sistema **Clinix**.
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
-
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-brightgreen)
-
 ![Maven](https://img.shields.io/badge/Build-Maven-blue)
-
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-blue)
-
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
 ---
@@ -37,10 +33,8 @@ Sem instalar banco de dados nem Docker. Ideal para o primeiro contato com o proj
 
 **1. Clonar e entrar no projeto**
 
-> **Importante:** Altere `<SEU_USUARIO>` para o seu login do GitHub antes de colar no terminal.
-
 ```bash
-git clone https://github.com/<SEU_USUARIO>/clinix-backend.git
+git clone https://github.com/clinix-org/clinix-backend.git
 cd clinix-backend
 ```
 
@@ -67,7 +61,7 @@ chmod +x mvnw
 Se falhar, use:
 
 ```bash
-export $(grep -v '^#' .env.local | xargs) && ./mvnw spring-boot:run
+export $(grep -v '^#' .env.local | xargs) && ./mvnw clean spring-boot:run
 ```
 
 Windows (PowerShell):
@@ -78,7 +72,7 @@ Get-Content .env.local | ForEach-Object {
     [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2])
   }
 }
-.\mvnw spring-boot:run
+.\mvnw clean spring-boot:run
 ```
 
 **Pronto.** A API sobe em `http://localhost:8080`.
@@ -89,9 +83,9 @@ Get-Content .env.local | ForEach-Object {
 
 Use esta seção se quiser que os dados **não se percam** ao desligar a aplicação.
 
-> ⚠️ **Não pule esta parte.** A causa mais comum de erro na instalação é tentar subir o container do Postgres sem esses pré-requisitos ativos, especialmente no Windows.
+> **Não pule esta parte.** A causa mais comum de erro na instalação é tentar subir o container do Postgres sem esses pré-requisitos ativos, especialmente no Windows.
 
-### ✅ Checklist antes de continuar
+### Checklist antes de continuar
 
 Confirme cada item, na ordem, **antes** de rodar qualquer `docker compose`:
 
@@ -111,17 +105,19 @@ Comente o bloco do H2 e descomente o bloco do PostgreSQL:
 
 ```env
 # --- Opção 1: H2 (COMENTAR)
-# DB_URL=jdbc:h2:mem:clinix
+# DB_URL=jdbc:h2:mem:clinix_db
 # DB_USERNAME=sa
 # DB_PASSWORD=
 # DB_DDL_AUTO=create-drop
 
 # --- Opção 2: PostgreSQL via Docker (DESCOMENTAR)
-DB_URL=jdbc:postgresql://localhost:5432/clinix
+DB_URL=jdbc:postgresql://localhost:5432/clinix_db
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_DDL_AUTO=update
 ```
+
+---
 
 ### Passo 2 — Subir o container
 
@@ -129,7 +125,7 @@ DB_DDL_AUTO=update
 docker compose up -d
 ```
 
-Isso cria automaticamente o banco de dados **`clinix`** dentro do container, você não precisa criar nada manualmente.
+Isso cria automaticamente o banco de dados **`clinix_db`** dentro do container, você não precisa criar nada manualmente.
 
 Confirme se subiu:
 
@@ -140,14 +136,14 @@ docker compose ps
 Saída esperada:
 
 ```text
-NAME       IMAGE          STATUS
-postgres   postgres:18    Up
+NAME              IMAGE          STATUS
+clinix-postgres   postgres:18    Up
 ```
 
-### Passo 3 — (Opcional) Verificar se o banco `clinix` foi criado
+### Passo 3 — (Opcional) Verificar se o banco `clinix_db` foi criado
 
 ```bash
-docker exec -it postgres psql -U postgres
+docker exec -it clinix-postgres psql -U postgres
 ```
 
 Dentro do console `psql`:
@@ -156,7 +152,7 @@ Dentro do console `psql`:
 \l
 ```
 
-Você deve ver `clinix` na lista de bancos. Para sair:
+Você deve ver `clinix_db` na lista de bancos. Para sair:
 
 ```sql
 \q
@@ -173,7 +169,7 @@ Repita o comando do [Início rápido, passo 3](#início-rápido-h2-em-memória) 
 O container **não sobe sozinho** ao ligar a máquina. Antes de rodar o backend novamente, suba o container manualmente:
 
 ```bash
-docker start postgres
+docker start clinix-postgres
 ```
 
 Só depois disso, execute o backend normalmente.
@@ -191,7 +187,9 @@ OpenAPI Specs:  http://localhost:8080/v3/api-docs
 
 ## Frontend
 
-Interface web separada deste repositório:
+O **Clinix API** é o backend da aplicação e não possui uma interface gráfica própria. A interface web do Clinix está disponível em um repositório separado.
+
+Para executar o Clinix localmente com a **interface web acessível pelo navegador**, é necessário clonar, configurar e executar também o repositório do frontend:
 
 ```bash
 git clone https://github.com/clinix-org/clinix-frontend.git
@@ -214,10 +212,10 @@ docker compose down
 | Sintoma | Comando de checagem |
 | :--- | :--- |
 | Docker não responde | `docker ps` |
-| Container existe mas está parado | `docker compose ps` → depois `docker start postgres` |
+| Container existe mas está parado | `docker compose ps` → depois `docker start clinix-postgres` |
 | WSL2 instalado? | `wsl --status` |
 | Permissão negada no `./mvnw` | `chmod +x mvnw` |
-| Variáveis do `.env.local` não carregam | `export $(grep -v '^#' .env.local \| xargs) && ./mvnw spring-boot:run` |
+| Variáveis do `.env.local` não carregam | `export $(grep -v '^#' .env.local \| xargs) && ./mvnw clean spring-boot:run` |
 | Porta 5432 já em uso | Pare o serviço Postgres local ou altere a porta no `docker-compose.yml` e no `.env.local` |
 
 ---
