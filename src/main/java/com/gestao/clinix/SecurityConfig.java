@@ -50,6 +50,7 @@ public class SecurityConfig {
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+						.requestMatchers("/actuator/health").permitAll()
 						.requestMatchers("/users/**").hasRole("ADMIN").anyRequest().authenticated())
 				.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler)
 						.authenticationEntryPoint(authenticationEntryPoint))

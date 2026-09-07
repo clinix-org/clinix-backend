@@ -1,0 +1,64 @@
+name: 📚 Documentation
+description: Sugira uma correção ou melhoria na documentação do Clinix API.
+title: "[DOCS] "
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por contribuir com a documentação do Clinix API.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Verifiquei que esta sugestão ainda não foi feita em outra Issue.
+          required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Tipo de alteração
+      description: Qual tipo de melhoria você deseja sugerir?
+      options:
+        - Correção de informação
+        - Informação desatualizada
+        - Informação ausente
+        - Melhoria de clareza
+        - Melhoria de exemplos
+        - Outro
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Localização
+      description: Informe o arquivo, seção ou página relacionada à documentação.
+      placeholder: Exemplo: README.md → Pré-requisitos
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição
+      description: Explique o que precisa ser corrigido ou melhorado.
+      placeholder: Descreva a alteração sugerida.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Sugestão
+      description: Se possível, apresente uma sugestão de texto ou solução.
+      placeholder: Informe como a documentação poderia ser melhorada.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações adicionais
+      description: Adicione qualquer informação relevante.

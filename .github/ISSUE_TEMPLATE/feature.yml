@@ -1,0 +1,60 @@
+name: 💡 Feature Request
+description: Sugira uma nova funcionalidade ou melhoria para o Clinix API.
+title: "[FEATURE] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado pela sugestão!
+
+        Explique o problema ou necessidade que a funcionalidade pretende solucionar.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Verifiquei que esta sugestão ainda não foi feita em outra Issue.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema ou necessidade
+      description: Qual problema ou necessidade motivou esta sugestão?
+      placeholder: Descreva o problema que deseja solucionar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução proposta
+      description: Descreva a funcionalidade ou melhoria que você sugere.
+      placeholder: Explique como a solução poderia funcionar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefícios
+      description: Quais benefícios essa funcionalidade traria para o projeto ou seus usuários?
+      placeholder: Descreva os principais benefícios.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Existem outras soluções que poderiam resolver o problema?
+      placeholder: Descreva outras alternativas, se houver.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações adicionais
+      description: Adicione referências, exemplos, links ou outras informações relevantes.

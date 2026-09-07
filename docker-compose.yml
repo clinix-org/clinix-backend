@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: clinix-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: "clinix_db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - clinix_postgres_data:/var/lib/postgresql
+
+volumes:
+  clinix_postgres_data:
