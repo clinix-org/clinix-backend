@@ -79,6 +79,29 @@ Get-Content .env.local | ForEach-Object {
 
 ---
 
+## API via Docker com Neon
+
+Com o Docker Desktop em execução, configure a opção 3 (Neon) no `.env.local`,
+mantendo as opções H2 e PostgreSQL local comentadas. Depois execute:
+
+```bash
+docker compose up -d --build
+docker compose logs -f api
+```
+
+O Docker compila o projeto e inicia a API em `http://localhost:8080`, usando
+as variáveis do `.env.local`. Não é necessário instalar Java ou Maven na máquina.
+O banco continua no Neon; o PostgreSQL local é opcional e não inicia por padrão.
+O frontend tem seu próprio Compose no repositório `clinix-frontend`.
+
+Aguarde a mensagem de inicialização do Spring Boot e acesse
+`http://localhost:8080/swagger-ui.html`. Use Ctrl+C para sair dos logs;
+o container continua rodando em segundo plano.
+
+Depois de alterar o código ou o `.env.local`, execute novamente
+`docker compose up -d --build`. Para parar a API, use `docker compose stop api`.
+A API usa a porta 8080 dentro e fora do container, mesmo se `PORT` no arquivo tiver outro valor.
+
 ## PostgreSQL via Docker (opcional, com persistência)
 
 Use esta seção se quiser que os dados **não se percam** ao desligar a aplicação.
@@ -122,10 +145,26 @@ DB_DDL_AUTO=update
 ### Passo 2 — Subir o container
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
-Isso cria automaticamente o banco de dados **`clinix_db`** dentro do container, você não precisa criar nada manualmente.
+Isso inicia somente o PostgreSQL e cria automaticamente o banco de dados
+**`clinix_db`** dentro do container. Esta opção atende à API executada pelo Maven
+na máquina, usando `localhost` na URL do banco.
+
+Para executar também a API no Docker com esse banco local, use
+`DB_URL=jdbc:postgresql://postgres:5432/clinix_db` no `.env.local`, mantenha as
+credenciais locais acima e execute:
+
+```bash
+docker compose up -d postgres
+docker compose exec postgres pg_isready -U postgres -d clinix_db
+docker compose up -d --build api
+```
+
+Execute o último comando depois que o banco informar `accepting connections`.
+Dentro do container da API, o endereço do banco é `postgres`, pois `localhost`
+aponta para o próprio container da API.
 
 Confirme se subiu:
 
@@ -166,7 +205,8 @@ Repita o comando do [Início rápido, passo 3](#início-rápido-h2-em-memória) 
 
 ### Depois de reiniciar o computador
 
-O container **não sobe sozinho** ao ligar a máquina. Antes de rodar o backend novamente, suba o container manualmente:
+Abra o Docker Desktop e aguarde o banco iniciar (ele usa `restart: always`).
+Se estiver parado, inicie manualmente:
 
 ```bash
 docker start clinix-postgres
