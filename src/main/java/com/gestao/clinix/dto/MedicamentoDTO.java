@@ -1,9 +1,5 @@
 package com.gestao.clinix.dto;
 
-import org.modelmapper.ModelMapper;
-
-import com.gestao.clinix.entity.Medicamento;
-
 public class MedicamentoDTO {
 	
 	
@@ -45,11 +41,4 @@ public class MedicamentoDTO {
 		this.nomeGenerico = nomeGenerico;
 	}	
 	
-	static ModelMapper getModelMapper() {
-		return new ModelMapper();
-	}
-	
-	public static MedicamentoDTO convertToDTO(Medicamento medicamento) {
-		return getModelMapper().map(medicamento, MedicamentoDTO.class);
-	}	
 }

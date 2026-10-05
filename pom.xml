@@ -63,11 +63,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-		    <groupId>org.modelmapper</groupId>
-		    <artifactId>modelmapper</artifactId>
-		    <version>3.2.0</version>
-		</dependency>
 		<!-- Spring Security -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>

@@ -6,6 +6,7 @@ import com.gestao.clinix.dto.AuthenticatedUserContextResponse;
 import com.gestao.clinix.entity.Users;
 import com.gestao.clinix.exception.AccountLockedException;
 import com.gestao.clinix.exception.ResourceNotFoundException;
+import com.gestao.clinix.mapper.UserMapper;
 import com.gestao.clinix.repository.UserRepository;
 
 @Service
@@ -13,10 +14,13 @@ public class UserContextService {
 
 	private final UserRepository userRepository;
 	private final AccessPolicyService accessPolicyService;
+	private final UserMapper userMapper;
 
-	public UserContextService(UserRepository userRepository, AccessPolicyService accessPolicyService) {
+	public UserContextService(UserRepository userRepository, AccessPolicyService accessPolicyService,
+			UserMapper userMapper) {
 		this.userRepository = userRepository;
 		this.accessPolicyService = accessPolicyService;
+		this.userMapper = userMapper;
 	}
 
 	public AuthenticatedUserContextResponse getContextByUsername(String username) {
@@ -27,31 +31,8 @@ public class UserContextService {
 			throw new AccountLockedException("Conta inativa ou bloqueada.");
 		}
 
-		return new AuthenticatedUserContextResponse(
-				user.getId(),
-				user.getNome(),
-				user.getUsuario(),
-				maskEmail(user.getUsuario()),
+		return userMapper.toContextResponse(user,
 				accessPolicyService.resolveRoles(user.getRole()),
-				accessPolicyService.resolvePermissions(user.getRole()),
-				"ACTIVE",
-				null,
-				null);
-	}
-
-	private String maskEmail(String email) {
-		if (email == null || !email.contains("@")) {
-			return email;
-		}
-
-		String[] parts = email.split("@", 2);
-		String local = parts[0];
-		String domain = parts[1];
-
-		if (local.length() <= 2) {
-			return local.charAt(0) + "***@" + domain;
-		}
-
-		return local.substring(0, 2) + "***@" + domain;
+				accessPolicyService.resolvePermissions(user.getRole()), "ACTIVE");
 	}
 }
