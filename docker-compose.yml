@@ -1,5 +1,16 @@
 services:
+  api:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+
   postgres:
+    profiles: ["local-db"]
     image: postgres:18
     container_name: clinix-postgres
     restart: always
