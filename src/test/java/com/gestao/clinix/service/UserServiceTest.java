@@ -15,12 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.gestao.clinix.dto.UserCreateRequest;
 import com.gestao.clinix.dto.UserUpdateRequest;
 import com.gestao.clinix.entity.Users;
+import com.gestao.clinix.mapper.UserMapper;
 import com.gestao.clinix.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +42,7 @@ class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		service = new UserService(userRepository, passwordEncoder, new ModelMapper(), new AccessPolicyService(),
+		service = new UserService(userRepository, passwordEncoder, new UserMapper(), new AccessPolicyService(),
 				userAuditService);
 	}
 

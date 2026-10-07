@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,7 @@ import com.gestao.clinix.dto.UserUpdateRequest;
 import com.gestao.clinix.entity.Users;
 import com.gestao.clinix.exception.DuplicateResourceException;
 import com.gestao.clinix.exception.ResourceNotFoundException;
+import com.gestao.clinix.mapper.UserMapper;
 import com.gestao.clinix.repository.UserRepository;
 
 @Service
@@ -31,15 +31,15 @@ public class UserService {
 
 	private final UserRepository repo;
 	private final PasswordEncoder encoder;
-	private final ModelMapper mapper;
+	private final UserMapper userMapper;
 	private final AccessPolicyService accessPolicyService;
 	private final UserAuditService userAuditService;
 
-	public UserService(UserRepository repo, PasswordEncoder encoder, ModelMapper mapper,
+	public UserService(UserRepository repo, PasswordEncoder encoder, UserMapper userMapper,
 			AccessPolicyService accessPolicyService, UserAuditService userAuditService) {
 		this.repo = repo;
 		this.encoder = encoder;
-		this.mapper = mapper;
+		this.userMapper = userMapper;
 		this.accessPolicyService = accessPolicyService;
 		this.userAuditService = userAuditService;
 	}
@@ -54,7 +54,7 @@ public class UserService {
 
 		Users saved = repo.save(user);
 		userAuditService.registerCreated(saved, metadata);
-		return toResponse(saved);
+		return userMapper.toResponse(saved);
 	}
 
 	@Transactional
@@ -68,17 +68,17 @@ public class UserService {
 
 		Users saved = repo.save(user);
 		userAuditService.registerUpdated(saved, metadata);
-		return toResponse(saved);
+		return userMapper.toResponse(saved);
 	}
 
 	@Transactional(readOnly = true)
 	public UserResponse findById(Long id) {
-		return toResponse(findUserOrThrow(id));
+		return userMapper.toResponse(findUserOrThrow(id));
 	}
 
 	@Transactional(readOnly = true)
 	public List<UserResponse> findAll() {
-		return repo.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+		return repo.findAll().stream().map(userMapper::toResponse).collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -89,7 +89,7 @@ public class UserService {
 
 		String term = search.trim();
 		return repo.searchByTerm(term).stream()
-				.map(this::toResponse)
+				.map(userMapper::toResponse)
 				.collect(Collectors.toList());
 	}
 
@@ -182,7 +182,4 @@ public class UserService {
 		return accessPolicyService.normalizeRole(role);
 	}
 
-	private UserResponse toResponse(Users user) {
-		return mapper.map(user, UserResponse.class);
-	}
 }
