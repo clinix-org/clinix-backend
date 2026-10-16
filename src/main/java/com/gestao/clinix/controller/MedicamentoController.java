@@ -2,6 +2,7 @@ package com.gestao.clinix.controller;
 
 import java.util.List;
 
+import com.gestao.clinix.config.AppConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,20 @@ public class MedicamentoController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}		
-	}	
-	
+	}
+
+    @GetMapping("/nomecomercial")
+    public ResponseEntity<MedicamentoResponse> getAllMedicamentosByNomeComercial(
+            @RequestParam(name = "nomeComercial", required = false) String nomeComercial,
+            @RequestParam(name = "pageSize", defaultValue = AppConsts.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "pageNumber", defaultValue = AppConsts.PAGE_NUM, required = false) Integer pageNumber,
+            @RequestParam(name = "sortBy", defaultValue = AppConsts.SORT_MEDICAMENTOS_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConsts.SORT_DIRECTION, required = false) String sortOrder
+    ){
+        MedicamentoResponse itemResponse = medicamentoService.getAllMedicamentosByNomeComercial( nomeComercial ,pageSize, pageNumber, sortBy, sortOrder);
+
+        return new ResponseEntity<>(itemResponse, HttpStatus.OK);
+    }
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable Long id) {
