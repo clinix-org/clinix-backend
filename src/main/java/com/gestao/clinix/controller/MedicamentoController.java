@@ -3,6 +3,7 @@ package com.gestao.clinix.controller;
 import java.util.List;
 
 import com.gestao.clinix.config.AppConsts;
+import com.gestao.clinix.dto.MedicamentoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,6 @@ public class MedicamentoController {
 	@Autowired
 	private MedicamentoService medicamentoService;
 	
-	
 	@GetMapping()
 	public ResponseEntity<?> getAll() {
 		try {
@@ -34,7 +34,7 @@ public class MedicamentoController {
 			return ResponseEntity.status(HttpStatus.OK).body(medicamentosDTO);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}		
+		}
 	}
 
     @GetMapping("/nomecomercial")
@@ -91,11 +91,8 @@ public class MedicamentoController {
 		} catch (Exception e) {
 			return new ResponseEntity<>("Falha ao tentar excluir o medicamento!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}		
-	}	
-	
-	
+	}
 	public MedicamentoService getMedicamentoService() {
 		return medicamentoService;
 	}
-
 }

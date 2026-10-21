@@ -13,6 +13,10 @@ public class MedicamentoMapper {
 		dto.setId(medicamento.getId());
 		dto.setNomeComercial(medicamento.getNomeComercial());
 		dto.setNomeGenerico(medicamento.getNomeGenerico());
+        dto.setQuantidade(medicamento.getQuantidade());
+        dto.setUnidadeMedida(medicamento.getUnidadeMedida());
+        dto.setCategoria(medicamento.getCategoria());
+        dto.setStatus(medicamento.getStatus());
 		return dto;
 	}
 
@@ -26,5 +30,9 @@ public class MedicamentoMapper {
 	public void updateEntity(MedicamentoDTO dto, Medicamento medicamento) {
 		medicamento.setNomeComercial(dto.getNomeComercial());
 		medicamento.setNomeGenerico(dto.getNomeGenerico());
+        medicamento.setQuantidade(dto.getQuantidade());
+        medicamento.setCategoria(dto.getCategoria());
+        medicamento.setUnidadeMedida(dto.getUnidadeMedida());
+        medicamento.setStatus(dto.getStatus());
 	}
 }
