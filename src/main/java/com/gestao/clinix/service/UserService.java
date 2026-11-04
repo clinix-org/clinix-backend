@@ -21,14 +21,6 @@ import com.gestao.clinix.repository.UserRepository;
 @Service
 public class UserService {
 
-	private static final String USER_NOT_FOUND_MESSAGE = "Usuario nao encontrado.";
-	private static final String DUPLICATE_CREATE_MESSAGE = "Ja existe um usuario cadastrado com este e-mail.";
-	private static final String DUPLICATE_UPDATE_MESSAGE = "Outro usuario ja utiliza este e-mail.";
-	private static final String SELF_DELETE_MESSAGE = "Nao e permitido excluir o proprio usuario autenticado.";
-	private static final String SELF_DISABLE_MESSAGE = "Nao e permitido desativar o proprio usuario autenticado.";
-	private static final String SELF_ROLE_DOWNGRADE_MESSAGE =
-			"Nao e permitido remover a permissao ADMIN do proprio usuario autenticado.";
-
 	private final UserRepository repo;
 	private final PasswordEncoder encoder;
 	private final UserMapper userMapper;
@@ -46,11 +38,11 @@ public class UserService {
 
 	@Transactional
 	public UserResponse create(UserCreateRequest dto) {
-		String usuario = normalizeUsuario(dto.getUsuario());
-		ensureUsuarioAvailableForCreate(usuario);
+		String username = normalizeUsuario(dto.getUsuario());
+		ensureUsuarioAvailableForCreate(username);
 
 		AuditMetadata metadata = userAuditService.currentMetadata();
-		Users user = buildNewUser(dto, usuario, metadata);
+		Users user = buildNewUser(dto, username, metadata);
 
 		Users saved = repo.save(user);
 		userAuditService.registerCreated(saved, metadata);
@@ -103,10 +95,10 @@ public class UserService {
 		userAuditService.registerDeleted(user, metadata);
 	}
 
-	private Users buildNewUser(UserCreateRequest dto, String usuario, AuditMetadata metadata) {
+	private Users buildNewUser(UserCreateRequest dto, String username, AuditMetadata metadata) {
 		Users user = new Users();
 		user.setNome(dto.getNome().trim());
-		user.setUsuario(usuario);
+		user.setUsuario(username);
 		user.setSenha(encoder.encode(dto.getSenha()));
 		user.setRole(normalizeRole(dto.getRole()));
 		user.setAtivo(true);
@@ -116,10 +108,10 @@ public class UserService {
 	}
 
 	private void applyUpdate(Users user, UserUpdateRequest dto, String normalizedRole, AuditMetadata metadata) {
-		String usuario = normalizeUsuario(dto.getUsuario());
-		ensureUsuarioAvailableForUpdate(user, usuario);
+		String username = normalizeUsuario(dto.getUsuario());
+		ensureUsuarioAvailableForUpdate(user, username);
 
-		user.setUsuario(usuario);
+		user.setUsuario(username);
 		user.setNome(dto.getNome().trim());
 		if (StringUtils.hasText(dto.getSenha())) {
 			user.setSenha(encoder.encode(dto.getSenha()));
@@ -136,17 +128,17 @@ public class UserService {
 		}
 
 		if (!dto.isAtivo()) {
-			throw new IllegalArgumentException(SELF_DISABLE_MESSAGE);
+			throw new IllegalArgumentException("Nao e permitido desativar o proprio usuario autenticado.");
 		}
 
 		if (!"ADMIN".equals(normalizedRole)) {
-			throw new IllegalArgumentException(SELF_ROLE_DOWNGRADE_MESSAGE);
+			throw new IllegalArgumentException("Nao e permitido remover a permissao ADMIN do proprio usuario autenticado.");
 		}
 	}
 
 	private void validateSelfDelete(Users user, AuditMetadata metadata) {
 		if (isAuthenticatedUser(user, metadata)) {
-			throw new IllegalArgumentException(SELF_DELETE_MESSAGE);
+			throw new IllegalArgumentException("Nao e permitido excluir o proprio usuario autenticado.");
 		}
 	}
 
@@ -154,28 +146,28 @@ public class UserService {
 		return user.getUsuario() != null && user.getUsuario().equalsIgnoreCase(metadata.performedBy());
 	}
 
-	private void ensureUsuarioAvailableForCreate(String usuario) {
-		repo.findByUsuario(usuario).ifPresent(u -> {
-			throw new DuplicateResourceException(DUPLICATE_CREATE_MESSAGE);
+	private void ensureUsuarioAvailableForCreate(String username) {
+		repo.findByUsuario(username).ifPresent(u -> {
+			throw new DuplicateResourceException("Ja existe um usuario cadastrado com este e-mail.");
 		});
 	}
 
-	private void ensureUsuarioAvailableForUpdate(Users user, String usuario) {
-		if (user.getUsuario().equalsIgnoreCase(usuario)) {
+	private void ensureUsuarioAvailableForUpdate(Users user, String username) {
+		if (user.getUsuario().equalsIgnoreCase(username)) {
 			return;
 		}
 
-		repo.findByUsuario(usuario).ifPresent(other -> {
-			throw new DuplicateResourceException(DUPLICATE_UPDATE_MESSAGE);
+		repo.findByUsuario(username).ifPresent(other -> {
+			throw new DuplicateResourceException("Outro usuario ja utiliza este e-mail.");
 		});
 	}
 
 	private Users findUserOrThrow(Long id) {
-		return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND_MESSAGE));
+		return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario nao encontrado."));
 	}
 
-	private String normalizeUsuario(String usuario) {
-		return usuario.trim().toLowerCase(Locale.ROOT);
+	private String normalizeUsuario(String username) {
+		return username.trim().toLowerCase(Locale.ROOT);
 	}
 
 	private String normalizeRole(String role) {

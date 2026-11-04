@@ -12,17 +12,9 @@ import com.gestao.clinix.entity.Users;
 public class UserMapper {
 
 	public UserResponse toResponse(Users user) {
-		UserResponse response = new UserResponse();
-		response.setId(user.getId());
-		response.setNome(user.getNome());
-		response.setUsuario(user.getUsuario());
-		response.setRole(user.getRole());
-		response.setAtivo(user.isAtivo());
-		response.setCreatedBy(user.getCreatedBy());
-		response.setCreatedAt(user.getCreatedAt());
-		response.setUpdatedBy(user.getUpdatedBy());
-		response.setUpdatedAt(user.getUpdatedAt());
-		return response;
+		return new UserResponse(
+				user.getId(), user.getNome(), user.getUsuario(), user.getRole(), user.isAtivo(),
+				user.getCreatedBy(), user.getCreatedAt(), user.getUpdatedBy(), user.getUpdatedAt());
 	}
 
 	public AuthenticatedUserContextResponse toContextResponse(Users user, List<String> roles,

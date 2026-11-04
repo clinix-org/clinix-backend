@@ -39,7 +39,7 @@ public class UserController {
 	public ResponseEntity<UserResponse> create(@Valid @RequestBody UserCreateRequest dto) {
 		UserResponse created = svc.create(dto);
 		// retorna 201 com location para o recurso criado
-		return ResponseEntity.created(URI.create("/users/" + created.getId())).body(created);
+		return ResponseEntity.created(URI.create("/users/" + created.id())).body(created);
 	}
 
 	/**

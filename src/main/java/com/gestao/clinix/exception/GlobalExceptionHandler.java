@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.gestao.clinix.config.RequestIdFilter;
+import com.gestao.clinix.constants.AuthenticationMessages;
 import com.gestao.clinix.dto.ApiErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler({ AccountLockedException.class, DisabledException.class })
 	public ResponseEntity<ApiErrorResponse> handleAccountLocked(RuntimeException ex,
 			HttpServletRequest request) {
-		return build(HttpStatus.LOCKED, "ACCOUNT_LOCKED", "Conta inativa ou bloqueada.", request);
+		return build(HttpStatus.LOCKED, "ACCOUNT_LOCKED", AuthenticationMessages.ACCOUNT_LOCKED, request);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
@@ -71,7 +73,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ApiErrorResponse> handleAuthentication(AuthenticationException ex,
 			HttpServletRequest request) {
-		return build(HttpStatus.UNAUTHORIZED, "AUTH_UNAUTHORIZED", "E-mail ou senha incorretos.", request);
+		return build(HttpStatus.UNAUTHORIZED, "AUTH_UNAUTHORIZED", AuthenticationMessages.BAD_CREDENTIALS, request);
+	}
+
+	@ExceptionHandler(AuthenticationServiceException.class)
+	public ResponseEntity<ApiErrorResponse> handleAuthenticationServiceFailure(AuthenticationServiceException ex,
+			HttpServletRequest request) {
+		return handleUnexpected(ex, request);
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
