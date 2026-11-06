@@ -1,7 +1,15 @@
 package com.gestao.clinix.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
+import com.gestao.clinix.dto.MedicamentoResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gestao.clinix.dto.MedicamentoDTO;
@@ -51,7 +59,38 @@ public class MedicamentoService {
 		medicamentoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Não existe um medicamento com ID: " + id));
 		medicamentoRepository.deleteById(id);
 	}
-	
 
+    public MedicamentoResponse getAllMedicamentosByNomeComercial(String nomeComercial, Integer pageSize, Integer pageNumber, String sortBy, String sortOrder) {
+        Sort sortByNomeComercial = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByNomeComercial);
+
+        Specification<Medicamento> spec = Specification.allOf(List.of());
+
+        if(nomeComercial!=null && !nomeComercial.isEmpty()){
+            spec = spec.and((root, query, criteriaBuilder)
+                    -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nomeComercial")), "%"+nomeComercial.toLowerCase()+"%"));
+        }
+
+        Page<Medicamento> medicamentosPage = medicamentoRepository.findAll(spec, pageable);
+
+        List<Medicamento> medicamentos = medicamentosPage.getContent();
+
+        List<MedicamentoDTO> medicamentosDTOs = medicamentos.stream()
+                .map(medicamento -> {return medicamentoMapper.toResponse(medicamento);}).toList();
+
+        MedicamentoResponse medicamentoResponse = new MedicamentoResponse();
+        medicamentoResponse.setMedicamentos(medicamentosDTOs);
+        medicamentoResponse.setPageNumber(medicamentosPage.getNumber());
+        medicamentoResponse.setPageSize(medicamentosPage.getSize());
+        medicamentoResponse.setTotalPages(medicamentosPage.getTotalPages());
+        medicamentoResponse.setTotalElements(medicamentosPage.getTotalElements());
+        medicamentoResponse.setLastPage(medicamentosPage.isLast());
+        medicamentoResponse.setTimestamp(LocalDateTime.now(ZoneOffset.UTC));
+
+        return medicamentoResponse;
+    }
 
 }
