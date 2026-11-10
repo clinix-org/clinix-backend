@@ -61,8 +61,8 @@ class UserServiceTest {
 
 		var response = service.create(request);
 
-		assertThat(response.getCreatedBy()).isEqualTo("admin@clinix.com");
-		assertThat(response.getCreatedAt()).isEqualTo(ADMIN_METADATA.performedAt());
+		assertThat(response.createdBy()).isEqualTo("admin@clinix.com");
+		assertThat(response.createdAt()).isEqualTo(ADMIN_METADATA.performedAt());
 		verify(userAuditService).registerCreated(any(Users.class), any(AuditMetadata.class));
 	}
 
@@ -77,8 +77,8 @@ class UserServiceTest {
 
 		var response = service.update(20L, request);
 
-		assertThat(response.getUpdatedBy()).isEqualTo("admin@clinix.com");
-		assertThat(response.getUpdatedAt()).isEqualTo(ADMIN_METADATA.performedAt());
+		assertThat(response.updatedBy()).isEqualTo("admin@clinix.com");
+		assertThat(response.updatedAt()).isEqualTo(ADMIN_METADATA.performedAt());
 		verify(userAuditService).registerUpdated(existing, ADMIN_METADATA);
 	}
 

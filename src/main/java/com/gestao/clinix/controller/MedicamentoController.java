@@ -3,10 +3,10 @@ package com.gestao.clinix.controller;
 import java.util.List;
 
 import com.gestao.clinix.config.AppConsts;
-import com.gestao.clinix.dto.MedicamentoResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.gestao.clinix.dto.MedicamentoPageResponse;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,83 +16,61 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.gestao.clinix.dto.MedicamentoDTO;
+import com.gestao.clinix.dto.MedicamentoResponse;
 import com.gestao.clinix.service.MedicamentoService;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/medicamentos")
 public class MedicamentoController {
-	
-	@Autowired
-	private MedicamentoService medicamentoService;
-	
+
+	private final MedicamentoService medicationService;
+
+	public MedicamentoController(MedicamentoService medicationService) {
+		this.medicationService = medicationService;
+	}
+
 	@GetMapping()
-	public ResponseEntity<?> getAll() {
-		try {
-			List<MedicamentoDTO> medicamentosDTO = getMedicamentoService().getAll();
-			return ResponseEntity.status(HttpStatus.OK).body(medicamentosDTO);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+	public ResponseEntity<List<MedicamentoResponse>> getAll() {
+		return ResponseEntity.ok(medicationService.getAll());
 	}
 
-    @GetMapping("/nomecomercial")
-    public ResponseEntity<MedicamentoResponse> getAllMedicamentosByNomeComercial(
-            @RequestParam(name = "nomeComercial", required = false) String nomeComercial,
-            @RequestParam(name = "pageSize", defaultValue = AppConsts.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "pageNumber", defaultValue = AppConsts.PAGE_NUM, required = false) Integer pageNumber,
-            @RequestParam(name = "sortBy", defaultValue = AppConsts.SORT_MEDICAMENTOS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConsts.SORT_DIRECTION, required = false) String sortOrder
-    ){
-        MedicamentoResponse itemResponse = medicamentoService.getAllMedicamentosByNomeComercial( nomeComercial ,pageSize, pageNumber, sortBy, sortOrder);
+	@GetMapping("/nomecomercial")
+	public ResponseEntity<MedicamentoPageResponse> getAllMedicamentosByNomeComercial(
+			@RequestParam(name = "nomeComercial", required = false) String nomeComercial,
+			@RequestParam(name = "pageSize", defaultValue = AppConsts.PAGE_SIZE) Integer pageSize,
+			@RequestParam(name = "pageNumber", defaultValue = AppConsts.PAGE_NUM) Integer pageNumber,
+			@RequestParam(name = "sortBy", defaultValue = AppConsts.SORT_MEDICAMENTOS_BY) String sortBy,
+			@RequestParam(name = "sortOrder", defaultValue = AppConsts.SORT_DIRECTION) String sortOrder) {
+		return ResponseEntity.ok(medicationService.getAllMedicamentosByNomeComercial(
+				nomeComercial, pageSize, pageNumber, sortBy, sortOrder));
+	}
 
-        return new ResponseEntity<>(itemResponse, HttpStatus.OK);
-    }
-	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getById(@PathVariable Long id) {
-		try {
-			MedicamentoDTO livroDTO = getMedicamentoService().getById(id);
-			return new ResponseEntity<>(livroDTO, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>("Medicamento não encontrado!", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<MedicamentoResponse> getById(@PathVariable Long id) {
+		return ResponseEntity.ok(medicationService.getById(id));
 	}
-	
+
 	@PostMapping()
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> post(@RequestBody MedicamentoDTO medicamentoDTO){
-		try {
-			getMedicamentoService().post(medicamentoDTO);
-			return new ResponseEntity<>("Medicamento cadastrado com sucesso!", HttpStatus.OK);			
-		} catch (Exception e ) {
-			return new ResponseEntity<>("Falha ao cadastrar o medicamento", HttpStatus.INTERNAL_SERVER_ERROR);			
-		}
+	public ResponseEntity<String> post(@RequestBody MedicamentoDTO medicationRequest) {
+		medicationService.post(medicationRequest);
+		return ResponseEntity.ok("Medicamento cadastrado com sucesso!");
 	}
-	
+
 	@PutMapping()
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> update(@RequestBody MedicamentoDTO medicamentoDTO) {
-		try {
-			getMedicamentoService().update(medicamentoDTO);
-			return new ResponseEntity<>("Medicamento alterado com sucesso!", HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>("Falha ao atualizar o medicamento!", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<String> update(@RequestBody MedicamentoDTO medicationRequest) {
+		medicationService.update(medicationRequest);
+		return ResponseEntity.ok("Medicamento alterado com sucesso!");
 	}
-	
-	@DeleteMapping() 
+
+	@DeleteMapping()
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> delete (@RequestParam Long id) {
-		try {
-			getMedicamentoService().delete(id);
-			return new ResponseEntity<>("Medicamento deletado com sucesso!", HttpStatus.OK);		
-		} catch (Exception e) {
-			return new ResponseEntity<>("Falha ao tentar excluir o medicamento!", HttpStatus.INTERNAL_SERVER_ERROR);
-		}		
+	public ResponseEntity<String> delete(@RequestParam Long id) {
+		medicationService.delete(id);
+		return ResponseEntity.ok("Medicamento deletado com sucesso!");
 	}
-	public MedicamentoService getMedicamentoService() {
-		return medicamentoService;
-	}
+
 }

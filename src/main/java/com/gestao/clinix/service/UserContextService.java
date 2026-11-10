@@ -2,6 +2,7 @@ package com.gestao.clinix.service;
 
 import org.springframework.stereotype.Service;
 
+import com.gestao.clinix.constants.AuthenticationMessages;
 import com.gestao.clinix.dto.AuthenticatedUserContextResponse;
 import com.gestao.clinix.entity.Users;
 import com.gestao.clinix.exception.AccountLockedException;
@@ -28,7 +29,7 @@ public class UserContextService {
 				.orElseThrow(() -> new ResourceNotFoundException("Usuário da sessão não encontrado."));
 
 		if (!user.isAtivo()) {
-			throw new AccountLockedException("Conta inativa ou bloqueada.");
+			throw new AccountLockedException(AuthenticationMessages.ACCOUNT_LOCKED);
 		}
 
 		return userMapper.toContextResponse(user,
