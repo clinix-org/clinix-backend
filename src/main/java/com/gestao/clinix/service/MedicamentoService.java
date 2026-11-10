@@ -1,6 +1,15 @@
 package com.gestao.clinix.service;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import com.gestao.clinix.dto.MedicamentoPageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import org.springframework.stereotype.Service;
 
@@ -49,5 +58,28 @@ public class MedicamentoService {
 		medicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe um medicamento com ID: " + id));
 		medicationRepository.deleteById(id);
 	}
+
+    public MedicamentoPageResponse getAllMedicamentosByNomeComercial(String nomeComercial, Integer pageSize, Integer pageNumber, String sortBy, String sortOrder) {
+        Sort sortByNomeComercial = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByNomeComercial);
+
+        Specification<Medicamento> spec = Specification.allOf(List.of());
+
+        if(nomeComercial!=null && !nomeComercial.isEmpty()){
+            spec = spec.and((root, query, criteriaBuilder)
+                    -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nomeComercial")), "%"+nomeComercial.toLowerCase()+"%"));
+        }
+
+        Page<Medicamento> medicamentosPage = medicationRepository.findAll(spec, pageable);
+
+        return new MedicamentoPageResponse(
+                medicamentosPage.getContent().stream().map(medicationMapper::toResponse).toList(),
+                medicamentosPage.getSize(), medicamentosPage.getNumber(),
+                medicamentosPage.getTotalElements(), medicamentosPage.getTotalPages(),
+                medicamentosPage.isLast(), LocalDateTime.now(ZoneOffset.UTC));
+    }
 
 }

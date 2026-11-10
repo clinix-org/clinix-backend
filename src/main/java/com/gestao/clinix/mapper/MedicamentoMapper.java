@@ -11,7 +11,8 @@ public class MedicamentoMapper {
 
 	public MedicamentoResponse toResponse(Medicamento medicamento) {
 		return new MedicamentoResponse(medicamento.getId(), medicamento.getNomeComercial(),
-				medicamento.getNomeGenerico());
+				medicamento.getNomeGenerico(), medicamento.getQuantidade(), medicamento.getUnidadeMedida(),
+				medicamento.getCategoria(), medicamento.getStatus());
 	}
 
 	public Medicamento toEntity(MedicamentoDTO dto) {
@@ -24,5 +25,9 @@ public class MedicamentoMapper {
 	public void updateEntity(MedicamentoDTO dto, Medicamento medicamento) {
 		medicamento.setNomeComercial(dto.getNomeComercial());
 		medicamento.setNomeGenerico(dto.getNomeGenerico());
+		medicamento.setQuantidade(dto.getQuantidade());
+		medicamento.setUnidadeMedida(dto.getUnidadeMedida());
+		medicamento.setCategoria(dto.getCategoria());
+		medicamento.setStatus(dto.getStatus());
 	}
 }

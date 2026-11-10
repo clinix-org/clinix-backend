@@ -21,6 +21,18 @@ public class Medicamento {
 	@Column(name="NOME_GENERICO")
 	private String nomeGenerico;
 
+    @Column(name="QUANTIDADE")
+    private int quantidade;
+
+    @Column(name="CATEGORIA")
+    private String categoria;
+
+    @Column(name="UNIDADE_MEDIDA")
+    private String unidadeMedida;
+
+    @Column(name="STATUS")
+    private String status;
+
 	public Long getId() {
 		return id;
 	}
@@ -44,9 +56,23 @@ public class Medicamento {
 	public void setNomeGenerico(String nomeGenerico) {
 		this.nomeGenerico = nomeGenerico;
 	}
-	
-	
-	
+
+    public int getQuantidade() { return quantidade; }
+
+    public void setQuantidade(int quantidade) {this.quantidade = quantidade; }
+
+    public String getCategoria() { return categoria; }
+
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public String getUnidadeMedida() { return unidadeMedida; }
+
+    public void setUnidadeMedida(String unidadeMedida) { this.unidadeMedida = unidadeMedida; }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
+
 	/*@Column(name="CODIGO")
 	private Long codigo;
 	

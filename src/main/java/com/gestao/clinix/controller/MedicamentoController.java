@@ -2,6 +2,9 @@ package com.gestao.clinix.controller;
 
 import java.util.List;
 
+import com.gestao.clinix.config.AppConsts;
+import com.gestao.clinix.dto.MedicamentoPageResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +34,17 @@ public class MedicamentoController {
 	@GetMapping()
 	public ResponseEntity<List<MedicamentoResponse>> getAll() {
 		return ResponseEntity.ok(medicationService.getAll());
+	}
+
+	@GetMapping("/nomecomercial")
+	public ResponseEntity<MedicamentoPageResponse> getAllMedicamentosByNomeComercial(
+			@RequestParam(name = "nomeComercial", required = false) String nomeComercial,
+			@RequestParam(name = "pageSize", defaultValue = AppConsts.PAGE_SIZE) Integer pageSize,
+			@RequestParam(name = "pageNumber", defaultValue = AppConsts.PAGE_NUM) Integer pageNumber,
+			@RequestParam(name = "sortBy", defaultValue = AppConsts.SORT_MEDICAMENTOS_BY) String sortBy,
+			@RequestParam(name = "sortOrder", defaultValue = AppConsts.SORT_DIRECTION) String sortOrder) {
+		return ResponseEntity.ok(medicationService.getAllMedicamentosByNomeComercial(
+				nomeComercial, pageSize, pageNumber, sortBy, sortOrder));
 	}
 
 	@GetMapping("/{id}")

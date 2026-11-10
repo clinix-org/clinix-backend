@@ -61,7 +61,8 @@ class ResponseContractTest {
     @Test
     void medicamentoInputAndRecordResponseKeepTheSameJsonShape() throws Exception {
         String payload = """
-                {"id":9,"nomeComercial":"Comercial","nomeGenerico":"Generico"}
+                {"id":9,"nomeComercial":"Comercial","nomeGenerico":"Generico",
+                 "quantidade":12,"unidadeMedida":"comprimido","categoria":"Analgesico","status":"ATIVO"}
                 """;
         MedicamentoDTO request = objectMapper.readValue(payload, MedicamentoDTO.class);
         MedicamentoMapper mapper = new MedicamentoMapper();

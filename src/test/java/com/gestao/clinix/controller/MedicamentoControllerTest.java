@@ -2,6 +2,7 @@ package com.gestao.clinix.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -19,6 +20,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -59,6 +64,35 @@ class MedicamentoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nomeGenerico").value("Generico"));
+    }
+
+    @Test
+    void paginatedSearchKeepsEnvelopeAndMedicationFields() throws Exception {
+        var pageable = PageRequest.of(1, 2, Sort.by("nomeComercial").descending());
+        Medicamento medication = medicamento();
+        medication.setQuantidade(12);
+        medication.setCategoria("Analgesico");
+        medication.setUnidadeMedida("comprimido");
+        medication.setStatus("ATIVO");
+        when(repository.findAll(org.mockito.ArgumentMatchers.<Specification<Medicamento>>any(), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(medication), pageable, 3));
+
+        mvc.perform(get("/medicamentos/nomecomercial")
+                        .param("nomeComercial", "Com")
+                        .param("pageSize", "2").param("pageNumber", "1")
+                        .param("sortBy", "nomeComercial").param("sortOrder", "desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.medicamentos[0].id").value(1))
+                .andExpect(jsonPath("$.medicamentos[0].quantidade").value(12))
+                .andExpect(jsonPath("$.medicamentos[0].categoria").value("Analgesico"))
+                .andExpect(jsonPath("$.medicamentos[0].unidadeMedida").value("comprimido"))
+                .andExpect(jsonPath("$.medicamentos[0].status").value("ATIVO"))
+                .andExpect(jsonPath("$.pageSize").value(2))
+                .andExpect(jsonPath("$.pageNumber").value(1))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.lastPage").value(true))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
