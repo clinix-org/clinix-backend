@@ -1,8 +1,6 @@
 package com.gestao.clinix.controller;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +12,6 @@ import com.gestao.clinix.config.JwtService;
 import com.gestao.clinix.dto.AuthenticatedUserContextResponse;
 import com.gestao.clinix.dto.LoginRequest;
 import com.gestao.clinix.dto.LoginResponse;
-import com.gestao.clinix.exception.AccountLockedException;
 import com.gestao.clinix.security.AuthenticatedUserProvider;
 import com.gestao.clinix.service.UserContextService;
 
@@ -39,17 +36,11 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public LoginResponse login(@Valid @RequestBody LoginRequest request) {
-		try {
-			authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+		authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-			String token = jwtService.generateToken(request.getUsername());
-			return new LoginResponse(token);
-		} catch (DisabledException e) {
-			throw new AccountLockedException("Conta inativa ou bloqueada.");
-		} catch (RuntimeException e) {
-			throw new BadCredentialsException("E-mail ou senha incorretos.", e);
-		}
+		String token = jwtService.generateToken(request.getUsername());
+		return new LoginResponse(token);
 	}
 
 	@GetMapping("/me")

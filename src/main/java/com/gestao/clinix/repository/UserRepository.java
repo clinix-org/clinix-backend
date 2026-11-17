@@ -10,7 +10,7 @@ import com.gestao.clinix.entity.Users;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
 	
-	Optional<Users> findByUsuario(String usuario);
+	Optional<Users> findByUsuario(String username);
 
 	@Query("select u from Users u where lower(u.nome) like lower(concat('%', :term, '%')) or lower(u.usuario) like lower(concat('%', :term, '%'))")
 	List<Users> searchByTerm(@Param("term") String term);
