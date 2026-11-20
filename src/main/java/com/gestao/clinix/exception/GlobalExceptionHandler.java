@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -80,6 +83,19 @@ public class GlobalExceptionHandler {
 		LOGGER.warn("Data integrity violation. requestId={}, path={}", getRequestId(request), request.getRequestURI());
 		return build(HttpStatus.CONFLICT, "DATA_INTEGRITY_CONFLICT",
 				"Nao foi possivel salvar. Verifique se os dados ja existem.", request);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ApiErrorResponse> handleAccessDenied(AccessDeniedException ex,
+			HttpServletRequest request) {
+		return build(HttpStatus.FORBIDDEN, "AUTH_FORBIDDEN",
+				"Seu usuário não tem permissão para realizar esta ação.", request);
+	}
+
+	@ExceptionHandler({ HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class })
+	public ResponseEntity<ApiErrorResponse> handleMalformedRequest(Exception ex,
+			HttpServletRequest request) {
+		return build(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "Confira o formato dos dados informados.", request);
 	}
 
 	@ExceptionHandler(Exception.class)

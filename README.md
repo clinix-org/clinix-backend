@@ -218,6 +218,9 @@ Só depois disso, execute o backend normalmente.
 
 ## Documentação da API (Swagger)
 
+O cadastro integrado de medicamentos, contrato HTTP e procedimento de migração
+estão descritos em [Cadastro de medicamentos](docs/medications.md).
+
 ```text
 Swagger UI:     http://localhost:8080/swagger-ui.html
 OpenAPI Specs:  http://localhost:8080/v3/api-docs
