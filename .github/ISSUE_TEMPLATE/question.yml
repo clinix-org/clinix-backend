@@ -44,7 +44,7 @@ body:
     attributes:
       label: Ambiente
       description: Informe o ambiente utilizado.
-      placeholder: Exemplo: Fedora 44, Java 17, PostgreSQL 18
+      placeholder: Exemplo: Fedora 44, Java 25, PostgreSQL 18
     validations:
       required: true
 
