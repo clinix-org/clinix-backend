@@ -1,8 +1,8 @@
 # Clinix API (Backend)
 
-API RESTful em **Java 17 + Spring Boot 3** para o sistema **Clinix**.
+API RESTful em **Java 25 LTS + Spring Boot 3.5** para o sistema **Clinix**.
 
-![Java](https://img.shields.io/badge/Java-17-orange)
+![Java](https://img.shields.io/badge/Java-25_LTS-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-brightgreen)
 ![Maven](https://img.shields.io/badge/Build-Maven-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-blue)
@@ -21,10 +21,16 @@ Acesse a plataforma [Clinix](https://clinix-saude.vercel.app/).
 ## Pré-requisitos
 
 ```text
-✔ JDK 17 ou superior      → java -version
+✔ JDK 25 LTS             → java -version
 
-✔ Apache Maven 3.8+       → mvn --version
+✔ Maven Wrapper incluído → ./mvnw --version (Windows: .\mvnw.cmd --version)
 ```
+
+Configure `JAVA_HOME` para a instalação do **JDK 25** e inclua seu diretório `bin`
+no `PATH`. Na IDE, selecione o JDK 25 tanto para o projeto quanto para a execução
+do Maven e recarregue o `pom.xml`. Não é necessário instalar Maven separadamente:
+o Wrapper usa a versão 3.9.11.
+
 ---
 
 ## Início rápido (H2 em memória)

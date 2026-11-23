@@ -6,7 +6,7 @@ API REST da plataforma Clinix, responsável pelas regras de negócio, autentica�
 controle de acesso, usuários, medicamentos e auditoria. O frontend fica no
 repositório separado `clinix-org/clinix-frontend`.
 
-- Stack: Java 17, Spring Boot 3.5.5, Spring MVC, Spring Data JPA, Bean Validation,
+- Stack: Java 25, Spring Boot 3.5.16, Spring MVC, Spring Data JPA, Bean Validation,
   Spring Security com JWT, Maven Wrapper e documentação OpenAPI/Springdoc.
 - PostgreSQL em ambientes persistentes; H2 em memória para início rápido e testes.
 - Fontes de referência: `pom.xml`, `README.md`, `docs/medications.md`,
@@ -43,7 +43,7 @@ O pacote base é `com.gestao.clinix`, em `src/main/java/com/gestao/clinix/`.
   injeção por construtor e dependências `final` quando aplicável.
 - Use classes em `PascalCase`, métodos e campos em `camelCase`, constantes em
   `UPPER_SNAKE_CASE`. Preserve a indentação do arquivo editado.
-- Use APIs compatíveis com Java 17 e imports `jakarta.*` para JPA e validação.
+- Use APIs compatíveis com Java 25 e imports `jakarta.*` para JPA e validação.
 - Valide requests com Bean Validation e `@Valid`; implemente regras de negócio no
   service. Use DTOs para controlar os campos aceitos e retornados pela API.
 - Reutilize `GlobalExceptionHandler`, `ApiErrorResponse`, autenticação e
@@ -56,7 +56,7 @@ O pacote base é `com.gestao.clinix`, em `src/main/java/com/gestao/clinix/`.
 
 ## Configuração e execução local
 
-1. Instale JDK 17 e confirme `java -version`. Prefira o Maven Wrapper do projeto;
+1. Instale JDK 25 e confirme `java -version`. Prefira o Maven Wrapper do projeto;
    ele baixa a distribuição Maven configurada em `.mvn/wrapper/` no primeiro uso.
 2. Copie `.env.example` para `.env.local`, caso o arquivo local ainda não exista.
    Não sobrescreva configurações pessoais. Use apenas um bloco de banco por vez.
