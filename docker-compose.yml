@@ -1,27 +1,52 @@
+# Clinix Saúde — Backend
+#
+#   API:               docker compose up -d --build      (http://localhost:8090)
+#   API + PostgreSQL:  docker compose --profile local-db up -d --build
+#   Outro ambiente:    docker compose --env-file <arquivo> up -d
 services:
   api:
+    container_name: clinix-saude-backend
+    image: clinix-saude-backend:local
     build: .
     restart: unless-stopped
     env_file:
-      - .env.local
+      - ${BACKEND_ENV_FILE:-.env.local}
     environment:
       PORT: "8080"
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${BACKEND_PORT:-8090}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+    networks:
+      - clinix-saude
 
   postgres:
     profiles: ["local-db"]
     image: postgres:18
-    container_name: clinix-postgres
+    container_name: clinix-saude-postgres
     restart: always
     environment:
       POSTGRES_DB: "clinix_db"
       POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
     ports:
-      - "5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - clinix_postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d clinix_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - clinix-saude
+
+networks:
+  # Rede compartilhada com o frontend de produção.
+  clinix-saude:
+    name: clinix-saude-network
 
 volumes:
   clinix_postgres_data:

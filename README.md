@@ -95,18 +95,20 @@ docker compose up -d --build
 docker compose logs -f api
 ```
 
-O Docker compila o projeto e inicia a API em `http://localhost:8080`, usando
+O Docker compila o projeto e inicia a API em `http://localhost:8090`, usando
 as variáveis do `.env.local`. Não é necessário instalar Java ou Maven na máquina.
 O banco continua no Neon; o PostgreSQL local é opcional e não inicia por padrão.
 O frontend tem seu próprio Compose no repositório `clinix-frontend`.
 
 Aguarde a mensagem de inicialização do Spring Boot e acesse
-`http://localhost:8080/swagger-ui.html`. Use Ctrl+C para sair dos logs;
+`http://localhost:8090/swagger-ui.html`. Use Ctrl+C para sair dos logs;
 o container continua rodando em segundo plano.
 
 Depois de alterar o código ou o `.env.local`, execute novamente
 `docker compose up -d --build`. Para parar a API, use `docker compose stop api`.
-A API usa a porta 8080 dentro e fora do container, mesmo se `PORT` no arquivo tiver outro valor.
+A API usa a porta 8080 dentro do container e 8090 na sua máquina (altere com
+`BACKEND_PORT`). Executada pelo Maven, continua em 8080. As portas só aceitam
+conexões da própria máquina.
 
 ## PostgreSQL via Docker (opcional, com persistência)
 
@@ -159,7 +161,7 @@ Isso inicia somente o PostgreSQL e cria automaticamente o banco de dados
 na máquina, usando `localhost` na URL do banco.
 
 Para executar também a API no Docker com esse banco local, use
-`DB_URL=jdbc:postgresql://postgres:5432/clinix_db` no `.env.local`, mantenha as
+`DB_URL=jdbc:postgresql://clinix-saude-postgres:5432/clinix_db` no `.env.local`, mantenha as
 credenciais locais acima e execute:
 
 ```bash
@@ -169,7 +171,7 @@ docker compose up -d --build api
 ```
 
 Execute o último comando depois que o banco informar `accepting connections`.
-Dentro do container da API, o endereço do banco é `postgres`, pois `localhost`
+Dentro do container da API, o endereço do banco é `clinix-saude-postgres`, pois `localhost`
 aponta para o próprio container da API.
 
 Confirme se subiu:
@@ -181,14 +183,14 @@ docker compose ps
 Saída esperada:
 
 ```text
-NAME              IMAGE          STATUS
-clinix-postgres   postgres:18    Up
+NAME                    IMAGE          STATUS
+clinix-saude-postgres   postgres:18    Up (healthy)
 ```
 
 ### Passo 3 — (Opcional) Verificar se o banco `clinix_db` foi criado
 
 ```bash
-docker exec -it clinix-postgres psql -U postgres
+docker exec -it clinix-saude-postgres psql -U postgres
 ```
 
 Dentro do console `psql`:
@@ -215,7 +217,7 @@ Abra o Docker Desktop e aguarde o banco iniciar (ele usa `restart: always`).
 Se estiver parado, inicie manualmente:
 
 ```bash
-docker start clinix-postgres
+docker start clinix-saude-postgres
 ```
 
 Só depois disso, execute o backend normalmente.
@@ -225,8 +227,8 @@ Só depois disso, execute o backend normalmente.
 ## Documentação da API (Swagger)
 
 ```text
-Swagger UI:     http://localhost:8080/swagger-ui.html
-OpenAPI Specs:  http://localhost:8080/v3/api-docs
+Swagger UI:     http://localhost:8080/swagger-ui.html  (Docker: porta 8090)
+OpenAPI Specs:  http://localhost:8080/v3/api-docs      (Docker: porta 8090)
 ```
 
 ---
@@ -258,11 +260,11 @@ docker compose down
 | Sintoma | Comando de checagem |
 | :--- | :--- |
 | Docker não responde | `docker ps` |
-| Container existe mas está parado | `docker compose ps` → depois `docker start clinix-postgres` |
+| Container existe mas está parado | `docker compose ps` → depois `docker start clinix-saude-postgres` |
 | WSL2 instalado? | `wsl --status` |
 | Permissão negada no `./mvnw` | `chmod +x mvnw` |
 | Variáveis do `.env.local` não carregam | `export $(grep -v '^#' .env.local \| xargs) && ./mvnw clean spring-boot:run` |
-| Porta 5432 já em uso | Pare o serviço Postgres local ou altere a porta no `docker-compose.yml` e no `.env.local` |
+| Porta 5432 já em uso | Pare o serviço Postgres local ou defina `POSTGRES_PORT` e ajuste o `.env.local` |
 
 ---
 
