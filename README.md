@@ -81,7 +81,7 @@ Get-Content .env.local | ForEach-Object {
 .\mvnw clean spring-boot:run
 ```
 
-**Pronto.** A API sobe em `http://localhost:8080`.
+**Pronto.** A API sobe em `http://localhost:8090`.
 
 ---
 
@@ -106,9 +106,8 @@ o container continua rodando em segundo plano.
 
 Depois de alterar o código ou o `.env.local`, execute novamente
 `docker compose up -d --build`. Para parar a API, use `docker compose stop api`.
-A API usa a porta 8080 dentro do container e 8090 na sua máquina (altere com
-`BACKEND_PORT`). Executada pelo Maven, continua em 8080. As portas só aceitam
-conexões da própria máquina.
+A API responde em 8090 no Docker (altere com `BACKEND_PORT`) e no Maven (altere
+com `PORT`). No Docker, as portas só aceitam conexões da própria máquina.
 
 ## PostgreSQL via Docker (opcional, com persistência)
 
@@ -142,9 +141,9 @@ Comente o bloco do H2 e descomente o bloco do PostgreSQL:
 # DB_DDL_AUTO=create-drop
 
 # --- Opção 2: PostgreSQL via Docker (DESCOMENTAR)
-DB_URL=jdbc:postgresql://localhost:5432/clinix_db
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
+DB_URL=jdbc:postgresql://clinix-saude-postgres:5432/clinix_db
+DB_USERNAME=clinix_user
+DB_PASSWORD=clinix_password
 DB_DDL_AUTO=update
 ```
 
@@ -157,16 +156,14 @@ docker compose up -d postgres
 ```
 
 Isso inicia somente o PostgreSQL e cria automaticamente o banco de dados
-**`clinix_db`** dentro do container. Esta opção atende à API executada pelo Maven
-na máquina, usando `localhost` na URL do banco.
+**`clinix_db`** dentro do container. Se a API for executada pelo Maven
+na máquina, troque `clinix-saude-postgres` por `localhost` na `DB_URL`.
 
-Para executar também a API no Docker com esse banco local, use
-`DB_URL=jdbc:postgresql://clinix-saude-postgres:5432/clinix_db` no `.env.local`, mantenha as
-credenciais locais acima e execute:
+Para executar também a API no Docker, mantenha o `.env.local` acima e execute:
 
 ```bash
 docker compose up -d postgres
-docker compose exec postgres pg_isready -U postgres -d clinix_db
+docker compose exec postgres pg_isready -U clinix_user -d clinix_db
 docker compose up -d --build api
 ```
 
@@ -190,7 +187,7 @@ clinix-saude-postgres   postgres:18    Up (healthy)
 ### Passo 3 — (Opcional) Verificar se o banco `clinix_db` foi criado
 
 ```bash
-docker exec -it clinix-saude-postgres psql -U postgres
+docker exec -it clinix-saude-postgres psql -U clinix_user -d clinix_db
 ```
 
 Dentro do console `psql`:
@@ -227,8 +224,8 @@ Só depois disso, execute o backend normalmente.
 ## Documentação da API (Swagger)
 
 ```text
-Swagger UI:     http://localhost:8080/swagger-ui.html  (Docker: porta 8090)
-OpenAPI Specs:  http://localhost:8080/v3/api-docs      (Docker: porta 8090)
+Swagger UI:     http://localhost:8090/swagger-ui.html
+OpenAPI Specs:  http://localhost:8090/v3/api-docs
 ```
 
 ---
