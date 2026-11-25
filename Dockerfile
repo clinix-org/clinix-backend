@@ -18,4 +18,6 @@ USER appuser
 COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
+HEALTHCHECK --interval=15s --timeout=5s --start-period=90s --retries=3 \
+  CMD wget -q -O /dev/null "http://127.0.0.1:${PORT:-8080}/actuator/health" || exit 1
 ENTRYPOINT ["java", "-jar", "app.jar"]
