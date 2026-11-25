@@ -5,7 +5,7 @@
 services:
   api:
     container_name: clinix-saude-backend
-    image: clinix-saude-backend:local
+    image: clinix-saude-backend
     build: .
     restart: unless-stopped
     env_file:
