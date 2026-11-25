@@ -94,7 +94,8 @@ ambiente; a suíte usa as configurações próprias de teste.
 
 Em Linux/macOS, conceda permissão com `chmod +x mvnw` se necessário.
 O JAR atual é `target/clinix-0.0.1-SNAPSHOT.jar`; confira o `pom.xml` se mudar a versão.
-A API usa `http://localhost:8080` por padrão. Swagger: `/swagger-ui.html`;
+A API usa `http://localhost:8090` com o `.env.example` atual; sem `PORT`, o
+padrão da aplicação é 8080. Swagger: `/swagger-ui.html`;
 OpenAPI: `/v3/api-docs`; saúde: `/actuator/health`.
 
 Docker, com Docker Desktop/Engine em execução e `.env.local` configurado:
@@ -107,9 +108,11 @@ docker compose stop api
 ```
 
 Para PostgreSQL local opcional, execute `docker compose up -d postgres` e confira
-`docker compose exec postgres pg_isready -U postgres -d clinix_db` antes de iniciar
-a API. Use `localhost:5432` na URL JDBC para API na máquina e `postgres:5432`
-para API no Compose. O Compose fixa a API na porta 8080.
+`docker compose exec postgres pg_isready -U clinix_user -d clinix_db` antes de iniciar
+a API. Use `localhost:5432` na URL JDBC para API na máquina e
+`clinix-saude-postgres:5432` para API no Compose. O Compose fixa a
+porta interna da API em 8080 e publica `127.0.0.1:${BACKEND_PORT:-8090}`. A rede
+`clinix-saude-network` é compartilhada com o frontend de produção.
 `docker compose down` preserva o volume; não use `down -v` para parar o ambiente.
 
 ## Instruções de teste
