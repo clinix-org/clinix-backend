@@ -22,7 +22,6 @@ import com.gestao.clinix.config.CustomAuthenticationEntryPoint;
 import com.gestao.clinix.config.RequestIdFilter;
 import com.gestao.clinix.entity.Users;
 import com.gestao.clinix.exception.GlobalExceptionHandler;
-import com.gestao.clinix.mapper.MedicamentoMapper;
 import com.gestao.clinix.mapper.UserMapper;
 
 @JsonTest
@@ -59,18 +58,27 @@ class ResponseContractTest {
     }
 
     @Test
-    void medicamentoInputAndRecordResponseKeepTheSameJsonShape() throws Exception {
+    void medicationRecordsKeepEnglishFieldsAndExactDosage() throws Exception {
         String payload = """
-                {"id":9,"nomeComercial":"Comercial","nomeGenerico":"Generico",
-                 "quantidade":12,"unidadeMedida":"comprimido","categoria":"Analgesico","status":"ATIVO"}
+                {"medicationName":"Comercial","activeIngredient":[
+                 {"name":"Componente","dosage":123456789012.123456,"unitMeasurement":"mg"}],
+                 "category":"ANALGESIC","presentationFormat":"TABLET","manufacturer":"Fabricante"}
                 """;
-        MedicamentoDTO request = objectMapper.readValue(payload, MedicamentoDTO.class);
-        MedicamentoMapper mapper = new MedicamentoMapper();
-
-        JsonNode response = objectMapper.readTree(
-                objectMapper.writeValueAsString(mapper.toResponse(mapper.toEntity(request))));
-
-        assertThat(response).isEqualTo(objectMapper.readTree(payload));
+        MedicationRequest request = objectMapper.readValue(payload, MedicationRequest.class);
+        var response = new MedicationResponse(9L, request.medicationName(), request.activeIngredient(),
+                request.category(), request.presentationFormat(), request.manufacturer(), 0, "UNAVAILABLE",
+                java.time.Instant.parse("2026-11-23T15:00:00Z"), "qa@example.invalid");
+        JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(response));
+        assertThat(json.get("medicationName").asText()).isEqualTo("Comercial");
+        assertThat(json.get("activeIngredient").get(0).get("unitMeasurement").asText()).isEqualTo("mg");
+        assertThat(request.activeIngredient().get(0).dosage())
+                .isEqualByComparingTo("123456789012.123456");
+        MedicationResponse roundTrip = objectMapper.readValue(objectMapper.writeValueAsString(response),
+                MedicationResponse.class);
+        assertThat(roundTrip).isEqualTo(response);
+        assertThat(json.has("nomeComercial")).isFalse();
+        assertThat(json.get("quantity").asInt()).isZero();
+        assertThat(json.get("createdBy").asText()).isEqualTo("qa@example.invalid");
     }
 
     @Test
